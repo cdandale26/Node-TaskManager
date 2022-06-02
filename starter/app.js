@@ -1,8 +1,10 @@
 console.log("Task Manager App");
+const connectDB = require("./db/connect");
 const express = require("express");
 const app = express();
 const PORT = 3000;
 const tasks = require("./routes/tasks");
+require("dotenv").config();
 
 //middleware
 app.use(express.json());
@@ -14,6 +16,15 @@ app.get("/hello", (req, res) => {
 
 app.use("/api/v1/tasks", tasks);
 
-app.listen(PORT, (req, res) => {
-  console.log(`Server is listening on ${PORT}. . .`);
-});
+const start = async () => {
+  try {
+    await connectDB(process.env.MONGO_URI);
+    app.listen(PORT, (req, res) => {
+      console.log(`Server is listening on ${PORT}. . .`);
+    });
+  } catch (err) {
+    console.log(`We have the error:  ${err}`);
+  }
+};
+
+start();
